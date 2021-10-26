@@ -1,0 +1,110 @@
+swagger: "2.0" # OpenAPI Specificationのバージョン
+info: # 定義したAPIの詳細
+  title: Book Store # APIの名前
+  description: API for Book Store # APIの説明
+  version: 1.0.0 # APIのバージョン
+host: book-store.kabuku.co.jp # APIへのURL
+basePath: /api/v1 # APIへのURL
+schemes: # APIに使えるプロトコル
+  - http
+  - https
+consumes: # POST PUT PATCHで使うフォーマット
+  - application/json
+produces: # GETで使うフォーマット
+  - application/json
+
+path: # APIの各パスの定義
+  /books: # /bookの動作
+    get: # GETされたとき
+      tags: [Books]
+      summary: 本の一覧取得 # 概要
+      description: これまでに登録されている本の一覧を取得します｡ # 説明
+      operationId: getBooksList
+      responses: # 応答内容
+        "200":
+          description: successful operation
+          schema:
+            title: books
+            type: array
+            items:
+              $ref: "#/definitions/Book"
+
+  /books/{id}:
+    parameters: # APIで使用するパラメータの定義
+      - name: id # パラメータ名
+        in: path
+        description: book id
+        required: true # パラメータが必須であるかを定義
+        type: integer # パラメータの型
+        format: int64
+    get:
+      tags: [Books]
+      summary: 本の詳細取得
+      description: 指定されたidに該当するホンの詳細情報を取得します｡
+      operationId: getBookById
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            title: book
+            $ref: "#/definitions/Books"
+    put:
+      tags: [Books]
+      summary: 本の詳細情報更新
+      description: 指定されたidに該当する本の詳細情報を､渡されるパラメータに基づいて､更新します｡
+      operationId: updateBook
+      parameters:
+        - name: book
+          in: body
+          description: book parameter
+          required: true
+          schema:
+            $ref: "#/definitions/Book"
+        response:
+          "200":
+          description: successful operation
+          schema:
+            title: book
+            $ref: "#/definitions/Book"
+
+      delete:
+        tags: [Books]
+        summary: 本の削除
+        description: 指定されたidに該当する本を削除します
+        operationId: deleteBook
+        responses:
+          "204":
+            description: successful operation
+
+definitions: # APIで扱うデータの定義を行う
+  Book:
+    type: object
+    required: [id, title, author, release_date]
+    properties:
+      id:
+        type: integer
+        description: 本を識別する一意のID
+        readOnly: true
+        example: 1
+      title:
+        type: string
+        description: 本のタイトル
+        example: はじめてのThree.js 第2版 -WebGLのためのJavaScript 3Dライブラリ
+      author:
+        type: string
+        description: 著者名
+        example: Jos Dirksen
+      translator:
+        type: string
+        description: 翻訳者
+        example: あんどうやすし
+      release_date:
+        type: string
+        format: date
+        description: 発売日
+        example: 2016-07-23
+      url:
+        type: string
+        format: uri
+        description: 本のURL
+        example: https://www.amazon.co.jp/dp/483117704
